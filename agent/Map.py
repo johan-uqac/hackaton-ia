@@ -17,12 +17,12 @@ class Map:
         self.setMap(baseMapString)
         print(self.map)
         playerTuple = np.where((self.map == 1) | (self.map == 3) | (self.map == 5) | (self.map == 7))
-        self.player = (playerTuple[0][0], playerTuple[1][0])
+        self.player = (playerTuple[1][0], playerTuple[0][0])
         valveTuple = np.where((self.map == 2) | (self.map == 3) | (self.map == 6) | (self.map == 7))
-        self.valves = [(valveTuple[0][i], valveTuple[1][i]) for i in range(len(valveTuple[0]))]
+        self.valves = [(valveTuple[1][i], valveTuple[0][i]) for i in range(len(valveTuple[0]))]
         self.nbValves = len(self.valves)
         computerTuple = np.where((self.map == 4) | (self.map == 5) | (self.map == 6) | (self.map == 7))
-        self.computer = (computerTuple[0][0], computerTuple[1][0])
+        self.computer = (computerTuple[1][0], computerTuple[0][0])
         
     def getMap(self):
         return self.map

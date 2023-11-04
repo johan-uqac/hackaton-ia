@@ -48,6 +48,9 @@ class BFS:
     
     def algo(self):
         moves = []
+        print(self.map.valves)
+        print(self.map.player)
+        print(self.map.computer)
         for valve in self.map.valves:
             self.binaryTree.insertData(valve, self.calcDistance(self.map.player, valve))
 
