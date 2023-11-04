@@ -7,9 +7,12 @@ class Game:
         self.agentID = None
         self.gameID = None
         self.score = 0
+        
+    def initMap(self, baseMapString):
+        self.map.initMap(baseMapString)
     
     def setMap(self, baseMapString):
-        self.map.initMap(baseMapString)
+        self.map.setMap(baseMapString)
     
     def setAgentID(self, agentID):
         self.agentID = agentID
@@ -23,4 +26,5 @@ class Game:
     def printValues(self):
         print("Agent ID:", self.agentID)
         print("Game ID:", self.gameID)
+        print("Score:", self.score)
         self.map.printValues()
