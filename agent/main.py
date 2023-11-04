@@ -1,8 +1,8 @@
 from Agent import Agent
-from Bfs import BFS
-from Node import Node
 
-
-if __name__ == '__main__':
+def main():
     agent = Agent()
     agent.start()
+
+if __name__ == "__main__":
+    main()

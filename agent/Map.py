@@ -15,7 +15,6 @@ class Map:
         
     def initMap(self, baseMapString):
         self.setMap(baseMapString)
-        print(self.map)
         playerTuple = np.where((self.map == 1) | (self.map == 3) | (self.map == 5) | (self.map == 7))
         self.player = (playerTuple[1][0], playerTuple[0][0])
         valveTuple = np.where((self.map == 2) | (self.map == 3) | (self.map == 6) | (self.map == 7))

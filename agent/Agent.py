@@ -13,9 +13,8 @@ class Agent:
         self.sio.on('gamestatus_response', self.on_gamestatus_response)
         self.sio.on('move_response', self.on_move_response)
         self.sio.on('lockout_response', self.on_lockout_response)
-        self.sio.on('joinagent_response', self.on_joinagent_response)
-        self.lvl = input("Enter level (0, 1): ")
-        self.iterations = input("Enter number of iterations: ")
+        self.lvl = "1"
+        self.iterations = "1000"
         self.algorithm = None
 
     def start(self):
@@ -41,7 +40,7 @@ class Agent:
     def on_gamestatus_response(self, data):
         self.game.initMap(data)
         self.algorithm = Algorithm(self.game.map)
-        print("Moves", self.algorithm.getMoves())
+        self.resolveMap()
 
     def moveRight(self):
         self.sio.emit('move', [self.game.gameID, self.game.agentID, "RIGHT"], callback=self.on_move_response)
@@ -62,23 +61,19 @@ class Agent:
     def lockout(self):
         self.sio.emit('lockout', [self.game.gameID, self.game.agentID], callback=self.on_lockout_response)
 
-    def firstMaze(self):
-        self.moveRight()
-        self.moveRight()
-        self.lockout()
-        self.moveDown()
-        self.moveDown()
-        self.moveRight()
-        self.moveRight()
-        self.lockout()
-        self.moveDown()
-        self.moveDown()
-        self.moveLeft()
-        self.lockout()
-        self.moveLeft()
-        self.moveLeft()
-        self.moveLeft()
-        self.lockout()
+    def resolveMap(self):
+        movements = self.algorithm.getMoves()
+        for moves in movements:
+            for move in moves:
+                if move == "RIGHT":
+                    self.moveRight()
+                elif move == "LEFT":
+                    self.moveLeft()
+                elif move == "UP":
+                    self.moveUp()
+                elif move == "DOWN":
+                    self.moveDown()
+            self.lockout()
 
     def on_move_response(self, data):
         self.updateGame(data)
@@ -89,12 +84,12 @@ class Agent:
         # if self.game.map.nbValves == 0:
         #     print("missing computer", file=sys.stderr)
         if self.game.map.nbValves == -1 and bool(data[2]) == False:
-            print("Computer lockouted, resetting map", file=sys.stderr)
+            # print("Computer lockouted, resetting map", file=sys.stderr)
             self.game.initMap(data[0])
+            self.algorithm = Algorithm(self.game.map)
+            self.resolveMap()
         elif data[2]:
-            print("Computer lockouted, game won and is over with score:", self.game.score)     
+            print("Score:", self.game.score)
+            self.game.win = True
             self.sio.disconnect()   
             exit(0)
-
-    def on_joinagent_response(self, data):
-        print('Join agent response:', data, file=sys.stderr)

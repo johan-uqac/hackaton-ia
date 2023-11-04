@@ -6,6 +6,7 @@ class Game:
         self.agentID = None
         self.gameID = None
         self.score = 0
+        self.win = False
         
     def initMap(self, baseMapString):
         self.map.initMap(baseMapString)
@@ -26,4 +27,4 @@ class Game:
         print("Agent ID:", self.agentID)
         print("Game ID:", self.gameID)
         print("Score:", self.score)
-        self.map.printValues()
+        # self.map.printValues()
