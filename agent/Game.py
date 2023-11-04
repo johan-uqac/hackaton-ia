@@ -1,5 +1,4 @@
 from Map import Map
-import ast
 
 class Game:
     def __init__(self) -> None:
