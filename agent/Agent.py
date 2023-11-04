@@ -1,6 +1,7 @@
 import socketio
 import sys
 from Game import Game
+from Algorithm import Algorithm
 
 class Agent:
     def __init__(self):
@@ -15,6 +16,7 @@ class Agent:
         self.sio.on('joinagent_response', self.on_joinagent_response)
         self.lvl = input("Enter level (0, 1): ")
         self.iterations = input("Enter number of iterations: ")
+        self.algorithm = None
 
     def start(self):
         try:
@@ -38,7 +40,8 @@ class Agent:
 
     def on_gamestatus_response(self, data):
         self.game.initMap(data)
-        self.firstMaze()
+        self.algorithm = Algorithm(self.game.map)
+        print("Moves", self.algorithm.getMoves())
 
     def moveRight(self):
         self.sio.emit('move', [self.game.gameID, self.game.agentID, "RIGHT"], callback=self.on_move_response)
