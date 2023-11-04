@@ -15,12 +15,12 @@ class Node:
         self.left = None
         self.right = None
         self.data = data
-        self.distance = 0
+        self.distance = distance
 
     def PrintTree(self):
         if self.left:
             self.left.PrintTree()
-        print(self.data),
+        print("position", self.data, "distance = ", self.distance)
         if self.right:
             self.right.PrintTree()
 
@@ -89,19 +89,20 @@ def calcDistance(player, valve):
 
 def main():    
     player = findPlayerPos(GRID)
-    print(player)
+    # print(player)
     valve = findValvePos(GRID)
-    print(valve)
-    root = Node(player)
+    # print(valve)
+    root = Node(player, 0)
     for i in valve:
-        print("valve = ", i, "distance", calcDistance(player, i))
+        # print("valve = ", i, "distance", calcDistance(player, i))
+        root.insertData(i, calcDistance(player, i))
 
     # root = Node((0, 0))
     # print(type(root.data))
     # for index, x in enumerate(GRID):
     #     for y in x:
     #         root.insertData((index, y))
-    # root.PrintTree()
+    root.PrintTree()
 
 
 if __name__ == '__main__':
