@@ -1,14 +1,24 @@
 import sys
 import os
+from collections import deque
 
+# GRID = [
+#     [1, 0, 2, 0, 0],
+#     [0, 0, 0, 0, 2],
+#     [0, 0, 0, 0, 2],
+#     [0, 0, 0, 0, 0],
+#     [4, 0, 0, 2, 0]
+# ]
 GRID = [
-    [1, 0, 2, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 2],
-    [0, 0, 0, 0, 0],
-    [4, 0, 0, 2, 0]
+    [1, 0, 2, 0, 0, 0, 0, 2],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 2, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 2, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 0, 0, 0, 0, 0, 2, 0],
 ]
-
 
 class Node:
     def __init__(self, data, distance) -> None:
@@ -70,40 +80,58 @@ def distance(x1, y1, x2, y2):
     return ((x2 - x1)**2 + (y2 - y1)**2)**0.5
 
 def findPlayerPos(grid):
-    for index, x in enumerate(grid):
-        for y in x:
+    count, x, y = 0, 0, 0
+    for count, x in enumerate(grid):
+        for index, y in enumerate(x):
             if y == 1:
-                return (index, y)
+                return (count, index)
     return None
 
 def findValvePos(grid):
     valve_pos = []
-    for index, x in enumerate(grid):
-        for y in x:
+    count, x, y = 0, 0, 0
+    for count, x in enumerate(grid):
+        for index, y in enumerate(x):
             if y == 2:
-                valve_pos.append((index, y))
+                valve_pos.append((count, index))
     return valve_pos
 
 def calcDistance(player, valve):
     return distance(player[0], player[1], valve[0], valve[1])
 
+def bfs(root):
+    if not root:
+        return []
+
+    result = []
+    queue = deque()
+    queue.append(root)
+
+    while queue:
+        node = queue.popleft()
+        result.append(node.data)
+
+        if node.left:
+            queue.append(node.left)
+
+        if node.right:
+            queue.append(node.right)
+    return result
+
+def dijkstra(grid, start, end):
+    
+    return
+
 def main():    
     player = findPlayerPos(GRID)
-    # print(player)
     valve = findValvePos(GRID)
-    # print(valve)
-    root = Node(player, 0)
+    print("player by func = ", player, "valve by func = ", valve)
+    root = Node((0, 0), 0)
     for i in valve:
-        # print("valve = ", i, "distance", calcDistance(player, i))
+        print("distance from player = ", calcDistance(player, i))
         root.insertData(i, calcDistance(player, i))
-
-    # root = Node((0, 0))
-    # print(type(root.data))
-    # for index, x in enumerate(GRID):
-    #     for y in x:
-    #         root.insertData((index, y))
     root.PrintTree()
-
+    print(bfs(root))
 
 if __name__ == '__main__':
     main()
