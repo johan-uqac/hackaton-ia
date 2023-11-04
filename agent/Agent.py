@@ -1,5 +1,4 @@
 import socketio
-import sys
 from Game import Game
 from Algorithm import Algorithm
 
