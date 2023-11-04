@@ -18,51 +18,51 @@ app.get('/', (req, res) => {
 
 // Game maps, game properties under level_name key
 maps = {
-    "lvl0" : [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]
-    ],
-    "lvl1" : [
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
+  "lvl0": [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0]
+  ],
+  "lvl1": [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
 
-    ]
+  ]
 }
 
 valves = {
-    "lvl0" : [
-        [0, 2],
-        [2, 4],
-        [4, 3]
-    ],
-    "lvl1" : [
-        [0, 2], 
-        [0, 7],
-        [2, 3],
-        [3, 6],
-        [5, 1],
-        [7, 6]
-    ]
+  "lvl0": [
+    [0, 2],
+    [2, 4],
+    [4, 3]
+  ],
+  "lvl1": [
+    [0, 2],
+    [0, 7],
+    [2, 3],
+    [3, 6],
+    [5, 1],
+    [7, 6]
+  ]
 }
 
 
 start_points = {
-    "lvl0" : [0, 0],
-    "lvl1" : [0, 0]
+  "lvl0": [0, 0],
+  "lvl1": [0, 0]
 }
 
 goal_points = {
-    "lvl0" : [4, 0],
-    "lvl1" : [7, 0]
+  "lvl0": [4, 0],
+  "lvl1": [7, 0]
 }
 
 rooms = {}
@@ -80,14 +80,14 @@ io.on('connection', (socket) => {
 
     // Get unique ID
     do {
-        game_id = Math.floor(Math.random() * 10000);
+      game_id = Math.floor(Math.random() * 10000);
     } while (game_id in rooms)
 
     // Create game instance
     rooms[game_id] = new Plant(game_id, maps[level_name], start_points[level_name], goal_points[level_name], episodes)
     // Add valves
     valves[level_name].forEach(valve => {
-        rooms[game_id].addValve(valve[0], valve[1])
+      rooms[game_id].addValve(valve[0], valve[1])
     });
     // Add agent
     agent_id = rooms[game_id].addAgent()
@@ -99,7 +99,7 @@ io.on('connection', (socket) => {
   })
 
   // Websocket event "gamestatus" handler : Return JSON string of rooms[game_id] status
-  socket.on("gamestatus", (game_id, callback) => { 
+  socket.on("gamestatus", (game_id, callback) => {
     console.log(rooms[game_id].render())
     callback(rooms[game_id].render())
   })
@@ -111,7 +111,7 @@ io.on('connection', (socket) => {
     direction = args[2]
     rooms[game_id].moveAgent(agent_id, direction)
     // Callback to client with JSON string status and reward score of agent with ID agent_id 
-    callback([rooms[game_id].render(), rooms[game_id].getAgent(agent_id).getReward() ])
+    callback([rooms[game_id].render(), rooms[game_id].getAgent(agent_id).getReward()])
   })
 
   // Websocket "lockout" event handler : In game with ID=game_id, have agent with ID=agent_id lockout
@@ -121,19 +121,19 @@ io.on('connection', (socket) => {
     rooms[game_id].lockout(agent_id)
     console.log(rooms[game_id].isSolved())
     // Callback to client with JSON string status, reward score of agent with ID agent_id and the isSolved boolean (true if game is over)
-    callback([rooms[game_id].render(), rooms[game_id].getAgent(agent_id).getReward(), rooms[game_id].isSolved() ])
+    callback([rooms[game_id].render(), rooms[game_id].getAgent(agent_id).getReward(), rooms[game_id].isSolved()])
   })
 
-//  // Add an agent to a game
-//   socket.on("joinagent", (args, callback) => {
-//     game_id = args[0]
+  // Add an agent to a game
+  socket.on("joinagent", (args, callback) => {
+    game_id = args[0]
 
-//     if (game_id in rooms) {
-//         callback(rooms[game_id].addAgent())
-//     } else {
-//         callback("No game with this ID !")
-//     }
-//   })
+    if (game_id in rooms) {
+      callback(rooms[game_id].addAgent())
+    } else {
+      callback("No game with this ID !")
+    }
+  })
 
 });
 
