@@ -1,7 +1,10 @@
 import requests
 import socketio
+import json
+from Game import Game
 
 sio = socketio.Client()
+game = Game()
 
 @sio.event
 def connect():
@@ -11,22 +14,20 @@ def connect():
 @sio.event
 def disconnect():
     print("Disconnected from server")
-
-@sio.event
-def my_response(data):
-    print('Received:', data)
-
-@sio.event
-def message(data):
-    print('Message from server:', data)
+    exit(0)
 
 @sio.event
 def on_newgame_response(data):
-    print('New game created:', data)
+    game.setAgentID(data[0])
+    game.setGameID(data[1])
+    sio.emit('gamestatus', data[0], callback=on_gamestatus_response)
 
 @sio.event
 def on_gamestatus_response(data):
-    print('Game status:', data)
+    game.setMap(data)
+    game.printValues()
+    sio.emit('move', [game.agentID, game.gameID, [1, -1]], callback=on_move_response)
+    
 
 @sio.event
 def on_move_response(data):
@@ -41,5 +42,9 @@ def on_joinagent_response(data):
     print('Join agent response:', data)
 
 if __name__ == '__main__':
-    sio.connect('http://localhost:3000')
-    sio.wait()
+    try:
+        sio.connect('http://localhost:3000')
+        sio.wait()
+    except KeyboardInterrupt:
+        sio.disconnect()
+        exit(0)
